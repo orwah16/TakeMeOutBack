@@ -1,6 +1,7 @@
 const express = require('express'),
 router = express.Router(),
 hello = require('../controllers/hello.js')
+const pool = require("../db")
 
 //router.get('/',hello.hello)//when somone calls the / route it calls the hello function from the controller
 router.post("/",async(req,res)=>{
@@ -16,8 +17,11 @@ router.post("/",async(req,res)=>{
 
 router.get("/",async(req,res)=>{
     try{
+        console.log("------------- getting users -------------");
         const allUsers = await pool.query("SELECT * FROM users");
+        res.send("WTF");
         res.json(allUsers.rows);
+        console.log("------------- getting users -------------");
     }catch(err){
         console.error(err.message);
     }
