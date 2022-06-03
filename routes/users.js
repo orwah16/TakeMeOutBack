@@ -1,13 +1,14 @@
 const express = require('express'),
 router = express.Router(),
-hello = require('../controllers/hello.js')
-const pool = require("../db")
+hello = require('../controllers/hello.js');
+const pool = require("../db");
 
 //router.get('/',hello.hello)//when somone calls the / route it calls the hello function from the controller
 router.post("/",async(req,res)=>{
     try{
-        const {id,firstname,lastname} = req.body;
-        const newUser = await pool.query("INSERT INTO USERS (id,firstname,lastname) VALUES($1,$2,$3) RETURNING * ",[id,firstname,lastname]);
+        //console.log(req.body);
+        const {first_name,last_name} = req.body;
+        const newUser = await pool.query("INSERT INTO USERS (first_name,last_name) VALUES($1,$2) RETURNING * ",[first_name,last_name]);
         res.json(newUser);
         console.log(req.body);
     } catch(err){
@@ -19,7 +20,6 @@ router.get("/",async(req,res)=>{
     try{
         console.log("------------- getting users -------------");
         const allUsers = await pool.query("SELECT * FROM users");
-        res.send("WTF");
         res.json(allUsers.rows);
         console.log("------------- getting users -------------");
     }catch(err){
@@ -30,7 +30,7 @@ router.get("/",async(req,res)=>{
 router.get("/:id",async (req,res)=>{
     try{
         const {id} = req.params;
-        const users = await pool.query("SELECT * FROM users WHERE id = $1",[id]);
+        const users = await pool.query("SELECT * FROM users WHERE user_id = $1",[id]);
         res.json(users.rows);
 
     } catch(err){
@@ -40,9 +40,9 @@ router.get("/:id",async (req,res)=>{
 
 router.put("/:id",async (req,res)=>{
     try {
-        const {id} = req.params;
-        const {firstname,lastname} = req.body;
-        const updateUser = await pool.query("UPDATE users SET firstname = $1 AND lastname = $2 WHERE id = $3",[firstname,lastname,id]);
+        const {user_id} = req.params;
+        const {first_name,last_name} = req.body;
+        const updateUser = await pool.query("UPDATE users SET first_name = $1 AND last_name = $2 WHERE user_id = $3",[first_name,last_name,user_id]);
         res.json("user updated");
     } catch (err) {
         console.error(err.message);

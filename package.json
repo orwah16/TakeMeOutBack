@@ -1,7 +1,6 @@
 {
   "name": "takemeoutback",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -17,5 +16,15 @@
     "mysql2": "^2.3.0",
     "nodemon": "^2.0.16",
     "pg": "^8.7.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orwah16/TakeMeOutBack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/orwah16/TakeMeOutBack/issues"
+  },
+  "homepage": "https://github.com/orwah16/TakeMeOutBack#readme",
+  "description": ""
 }
