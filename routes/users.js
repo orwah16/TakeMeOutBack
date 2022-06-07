@@ -18,10 +18,8 @@ router.post("/",async(req,res)=>{
 
 router.get("/",async(req,res)=>{
     try{
-        console.log("------------- getting users -------------");
         const allUsers = await pool.query("SELECT * FROM users");
         res.json(allUsers.rows);
-        console.log("------------- getting users -------------");
     }catch(err){
         console.error(err.message);
     }
@@ -31,7 +29,7 @@ router.get("/:id",async (req,res)=>{
     try{
         const {id} = req.params;
         const users = await pool.query("SELECT * FROM users WHERE user_id = $1",[id]);
-        res.json(users.rows);
+        res.json(users.rows[0]  );
 
     } catch(err){
         console.log(err.message);
@@ -42,8 +40,18 @@ router.put("/:id",async (req,res)=>{
     try {
         const {user_id} = req.params;
         const {first_name,last_name} = req.body;
-        const updateUser = await pool.query("UPDATE users SET first_name = $1 AND last_name = $2 WHERE user_id = $3",[first_name,last_name,user_id]);
+        const updateUser = await pool.query("UPDATE users SET first_name = $1, last_name = $2 WHERE user_id = $3",[first_name,last_name,user_id]);
         res.json("user updated");
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+
+router.delete("/:id",async (req,res)=>{
+    try {
+        const {user_id} = req.params;
+        const updateUser = await pool.query("DELETE FROM users WHERE user_id = $1",[user_id]);
+        res.json("user deleted");
     } catch (err) {
         console.error(err.message);
     }
