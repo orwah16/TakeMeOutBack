@@ -7,12 +7,15 @@ DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS tags;
-
+DROP TABLE IF EXISTS interests;
+DROP TABLE IF EXISTS user_interests;
+DROP TABLE IF EXISTS post_interests;
 
 CREATE TABLE users(
   user_id INT GENERATED ALWAYS AS IDENTITY,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255),
+  email VARCHAR(255) NOT NULL,
   phone_number INT,
   city VARCHAR(255),
   PRIMARY KEY (user_id)
@@ -41,14 +44,30 @@ CREATE TABLE comments(
         ON DELETE CASCADE
 );
 
+CREATE TABLE interests(
+  interest_id INT GENERATED ALWAYS AS IDENTITY,
+  interest_name VARCHAR(255),
+  PRIMARY KEY (interest_id)
+);
+
 CREATE TABLE friends(
   user1 INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
   user2 INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE tags(
+/*posts user tagged in and vice versa*/
+CREATE TABLE tags(   
   user INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
   post INT NOT NULL REFERENCES posts (post_id) ON DELETE CASCADE
 );
 
+/*users interests*/
+CREATE TABLE user_interests(   
+  user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+  interest_id INT NOT NULL REFERENCES interests (interest_id) ON DELETE CASCADE
+);
 
+CREATE TABLE post_interests(   
+  user INT NOT NULL REFERENCES posts (post_id) ON DELETE CASCADE,
+  post INT NOT NULL REFERENCES interests (interest_id) ON DELETE CASCADE
+);

@@ -6,9 +6,10 @@ const pool = require("../db");
 //router.get('/',hello.hello)//when somone calls the / route it calls the hello function from the controller
 router.post("/",async(req,res)=>{
     try{
-        //console.log(req.body);
-        const {first_name,last_name} = req.body;
-        const newUser = await pool.query("INSERT INTO USERS (first_name,last_name) VALUES($1,$2) RETURNING * ",[first_name,last_name]);
+        console.log(req.body);
+        const [first_name,last_name,email] = req.body;
+        console.log(first_name);
+        const newUser = await pool.query("INSERT INTO USERS (first_name,last_name,email) VALUES($1,$2,$3) RETURNING * ",[first_name,last_name,email]);
         res.json(newUser);
         console.log(req.body);
     } catch(err){
@@ -20,8 +21,28 @@ router.get("/",async(req,res)=>{
     try{
         const allUsers = await pool.query("SELECT * FROM users");
         res.json(allUsers.rows);
+        console.error("got users");
     }catch(err){
         console.error(err.message);
+    }
+})
+
+router.get("/:email",async (req,res)=>{
+    try{
+        console.log("id by email params: ",req.params);
+
+        const email = req.params;
+        console.log("email param: ",email.email);
+
+        const users = await pool.query("SELECT user_id FROM users WHERE email = $1",[email.email]);
+        console.log("user from users/:email: ",users);
+        //console.log("user from users/:email: ",res);
+
+        userID=users.rows[0].user_id;
+        console.log("userID from /:email: ",userID);
+        res.json(userID)
+    } catch(err){
+        console.log(err.message);
     }
 })
 

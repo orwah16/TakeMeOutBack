@@ -3,7 +3,8 @@ app = express();
 const cors = require('cors');
 //const dbService = require('./database');
 //const pool = require("./db")
-const usersRoutes = require('./routes/users')
+const usersRoutes = require('./routes/users');
+const interestsRoutes = require('./routes/interests')
 // app.get('/',(req,res)=> {   moved to controllers
 //     res.send('hello')
 // })
@@ -15,7 +16,7 @@ app.listen(PORT, ()=> {
 })
 //app.use('/',require('./routes/hello.js'))
 app.use('/users',usersRoutes);
-
+app.use('/interests',interestsRoutes);
 
 app.use((req,res)=>{ //if no response
     res.status(404).render('404',{title: '404'}); 
