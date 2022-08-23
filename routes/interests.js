@@ -24,6 +24,26 @@ router.post("/",async(req,res)=>{
         console.log(err.message);
     }
 })
-router.get("/",async(req,res)=>{
-})
+router.get("/:id",async(req,res)=>{//get all the users interests
+    try{
+        console.log("request: ",req.params);
+        var user_id=req.params.id;
+        console.log("user_id for interests",user_id);
+        const result = await pool.query("SELECT interest_name FROM interests WHERE interest_id  in (SELECT interest_id from user_interests WHERE user_id = $1)",[user_id]);
+        console.log("user results from db: ",result);
+        resultArray=Object.values(result.rows);
+        console.log("user interests from db: ",resultArray);
+        var fuck;
+        var Array=[];
+        console.log("rows num: ",Object.values(result.rowCount));
+        for(let i=0;i<result.rowCount;i++){
+            fuck=resultArray[i];
+            console.log(fuck.interest_name);
+            Array.push(fuck.interest_name);
+        }
+        res.json(Array);
+    } catch(err){
+        console.log(err.message);
+    }
+});
 module.exports = router

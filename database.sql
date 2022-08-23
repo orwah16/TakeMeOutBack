@@ -18,6 +18,8 @@ CREATE TABLE users(
   email VARCHAR(255) NOT NULL,
   phone_number INT,
   city VARCHAR(255),
+  image VARCHAR(255),
+  user_posts INT[],
   PRIMARY KEY (user_id)
 );
 
@@ -25,6 +27,9 @@ CREATE TABLE posts(
   post_id INT GENERATED ALWAYS AS IDENTITY,
   user_id INT,
   post_title VARCHAR(255),
+  post_interest VARCHAR(255),
+  post_location VARCHAR(255),
+  image VARCHAR(255),
   text TEXT,
   PRIMARY KEY(post_id),
   CONSTRAINT fk_user
@@ -55,10 +60,10 @@ CREATE TABLE friends(
   user2 INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE
 );
 
-/*posts user tagged in and vice versa*/
+/*posts user tagged in and vice versa (interested in)*/
 CREATE TABLE tags(   
-  user INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
-  post INT NOT NULL REFERENCES posts (post_id) ON DELETE CASCADE
+  user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+  post_id INT NOT NULL REFERENCES posts (post_id) ON DELETE CASCADE
 );
 
 /*users interests*/
