@@ -104,22 +104,24 @@ router.get("/friends/posts/:id",async(req,res)=>{//get all the users interests
         console.log(err.message);
     }
 })
-router.post("/post/:id",async(req,res)=>{
+router.post("/post/",async(req,res)=>{
     try{
         console.log("params for post insert: ",req.body);
         const [user_id,interest,location,title,desc] = req.body;
-        const post_id = await pool.query("INSERT INTO posts (user_id,post_title,post_interest,text) VALUES($1,$2,$3,$4) RETURNING post_id ",[user_id,interest,location,title,desc]);
+        const result = await pool.query("INSERT INTO posts (user_id,post_interest,post_location,post_title,text) VALUES($1,$2,$3,$4,$5) RETURNING post_id ",[user_id,interest,location,title,desc]);
+        const post_id = result.rows[0].post_id;
+        console.log("post id going back from backend:",post_id);
         res.json(post_id);
     } catch(err){
         console.log(err.message);
     }
 })
-router.put("/post/update/:id",async(req,res)=>{
+router.put("/post/update/",async(req,res)=>{
     try{
-        console.log("params for post insert: ",req.body);
+        console.log("params for post update: ",req.body);
         const [image,post_id] = req.body;
-        const res = await pool.query("UPDATE posts SET image = $1 WHERE post_id = $2 ",[image,post_id]);
-        res.json(res);
+        const result = await pool.query("UPDATE posts SET image = $1 WHERE post_id = $2 ",[image,post_id]);
+        res.json(result);
     } catch(err){
         console.log(err.message);
     }
