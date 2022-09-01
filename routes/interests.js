@@ -45,5 +45,31 @@ router.get("/:id",async(req,res)=>{//get all the users interests
     } catch(err){
         console.log(err.message);
     }
+})
+router.get("/posts/:id",async(req,res)=>{//get all the users interests
+    try{
+        console.log("request: ",req.params);
+        var user_id=req.params.id;
+        console.log("user_id for interests posts",user_id);
+        const result = await pool.query("SELECT interest_name FROM interests WHERE interest_id  in (SELECT interest_id from user_interests WHERE user_id = $1)",[user_id]);
+        console.log("user results from db: ",result);
+        resultArray=Object.values(result.rows);
+        console.log("user interests from db: ",resultArray);
+        var fuck;
+        var Array=[];
+        for(let i=0;i<result.rowCount;i++){
+            fuck=resultArray[i];
+            console.log(fuck.interest_name);
+            Array.push("'"+fuck.interest_name+"'");
+        }
+        console.log("SELECT * FROM posts WHERE post_interest = any("+Array+");");
+        const posts = await pool.query("SELECT * FROM posts WHERE post_interest = any(ARRAY["+Array+"]);");
+        console.log("posts with similar interests: ",posts);
+        res.json(posts.rows);
+    } catch(err){
+        console.log(err.message);
+    }
 });
+
+
 module.exports = router

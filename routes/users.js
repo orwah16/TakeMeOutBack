@@ -91,9 +91,9 @@ router.get("/friends/:id",async (req,res)=>{
 })
 router.get("/friends/posts/:id",async(req,res)=>{//get all the users interests
     try{
-        console.log("request: ",req.params);
+        console.log("params for friends posts: ",req.params);
         var user_id=req.params.id;
-        console.log("user_id for interests",user_id);
+        console.log("user_id for friends posts",user_id);
         const result = await pool.query("SELECT * FROM posts WHERE post_id in (SELECT post_id FROM tags WHERE user_id  in (SELECT user2 from friends WHERE user1 = $1))",[user_id]);
         console.log("friends posts results from db: ",result);
         resultArray=Object.values(result.rows);
@@ -110,7 +110,8 @@ router.post("/post/",async(req,res)=>{
         const [user_id,interest,location,title,desc] = req.body;
         const result = await pool.query("INSERT INTO posts (user_id,post_interest,post_location,post_title,text) VALUES($1,$2,$3,$4,$5) RETURNING post_id ",[user_id,interest,location,title,desc]);
         const post_id = result.rows[0].post_id;
-        console.log("post id going back from backend:",post_id);
+        const result_3= await pool.query("INSERT INTO tags (user_id,post_id) VALUES($1,$2) RETURNING post_id ",[user_id,post_id]);//taging the owner in the post
+        console.log("post id going back from backend:",result_3.rows[0].post_id);
         res.json(post_id);
     } catch(err){
         console.log(err.message);
@@ -125,6 +126,14 @@ router.put("/post/update/",async(req,res)=>{
     } catch(err){
         console.log(err.message);
     }
+})
+router.get("/post/:id",async(req,res)=>{
+    console.log("request: ",req.params);
+    var user_id=req.params.id;
+    console.log("user_id for posts",user_id);
+    const result = await pool.query("SELECT * FROM posts WHERE post_id in (SELECT post_id from tags WHERE user_id = $1)",[user_id]);
+    console.log("user posts from db: ",result);
+    res.json(result);
 });
 module.exports = router
 
