@@ -16,7 +16,7 @@ CREATE TABLE users(
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255),
   email VARCHAR(255) NOT NULL,
-  phone_number INT,
+  phone_number VARCHAR(255),
   city VARCHAR(255),
   image VARCHAR(255),
   user_posts INT[],

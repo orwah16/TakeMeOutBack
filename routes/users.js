@@ -89,6 +89,19 @@ router.get("/friends/:id",async (req,res)=>{
         console.log("friends error: ",err.message);
     }
 })
+
+router.post("/friend/",async(req,res)=>{
+    try{
+        console.log("params for post update: ",req.body);
+        const [user_id,user_id_2] = req.body;
+        console.log("user_id: "+user_id+"    user 2 id: "+user_id_2);
+        const result = await pool.query("INSERT INTO friends (user1,user2) VALUES ($1,$2)",[user_id,user_id_2]);
+        res.json(user_id_2);
+    } catch(err){
+        console.log(err.message);
+    }
+})
+
 router.get("/friends/posts/:id",async(req,res)=>{//get all the users interests
     try{
         console.log("params for friends posts: ",req.params);
@@ -127,13 +140,60 @@ router.put("/post/update/",async(req,res)=>{
         console.log(err.message);
     }
 })
-router.get("/post/:id",async(req,res)=>{
+router.get("/post/:id",async(req,res)=>{//get posts tagged in (everyone is tagged in his post)
     console.log("request: ",req.params);
     var user_id=req.params.id;
     console.log("user_id for posts",user_id);
     const result = await pool.query("SELECT * FROM posts WHERE post_id in (SELECT post_id from tags WHERE user_id = $1)",[user_id]);
-    console.log("user posts from db: ",result);
-    res.json(result);
-});
-module.exports = router
+    console.log("user posts from db: ",result.rows);
+    res.json(result.rows);
+})
+router.get("/post/ids/:id",async(req,res)=>{//to get users tagged in post
+    console.log("request: ",req.params);
+    var post_id=req.params.id;
+    console.log("post id to get tagged users",post_id);
+    const result = await pool.query("SELECT user_id from tags WHERE post_id = $1",[post_id]);
+    console.log("users tagged in post from db: ",result);
+    res.json(result.rows);
+})
+router.post("/post/tag/",async(req,res)=>{
+    try{
+        console.log("params for post update: ",req.body);
+        const [user_id,post_id] = req.body;
+        const result = await pool.query("INSERT INTO tags (user_id,post_id) VALUES ($1,$2) RETURNING post_id",[user_id,post_id]);
+        res.json(result);
+    } catch(err){
+        console.log(err.message);
+    }
+})
+router.post("/post/delete/tag/",async(req,res)=>{
+    try{
+        console.log("params for post update: ",req.body);
+        const [user_id,post_id] = req.body;
+        const result = await pool.query("DELETE FROM tags WHERE user_id = $1 AND post_id = $2",[user_id,post_id]);
+        res.json(result);
+    } catch(err){
+        console.log(err.message);
+    }
+})
 
+router.get("/post/numbers/:id",async(req,res)=>{//to get users tagged in post
+    console.log("request: ",req.params);
+    var post_id=req.params.id;
+    console.log("post id to get user numbers",post_id);
+    const result = await pool.query("SELECT phone_number FROM users WHERE user_id in (SELECT user_id from tags WHERE post_id = $1)",[post_id]);
+    console.log("phone number of users in post from db: ",result);
+    res.json(result.rows);
+});
+
+module.exports = router;
+
+
+// router.get("/post/ids/:id",async(req,res)=>{//get posts tagged in (everyone is tagged in his post)
+//     console.log("request: ",req.params);
+//     var user_id=req.params.id;
+//     console.log("user_id for posts",user_id);
+//     const result = await pool.query(SELECT(EXISTS("SELECT post_id from tags WHERE user_id = $1)",[post_id,user_id])));
+//     console.log("check if user is tagged in post ",result);
+//     res.json(result.rows);
+// })
