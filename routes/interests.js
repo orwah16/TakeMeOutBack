@@ -69,6 +69,48 @@ router.get("/posts/:id",async(req,res)=>{//get all the users interests
     } catch(err){
         console.log(err.message);
     }
+})
+
+router.put("/rating/add",async(req,res)=>{
+    try{
+        console.log("request: ",req.body);
+        var user_id=req.body[0];
+        var interest_name=req.body[1];
+        console.log("API => interest name: ",interest_name);
+        console.log("API => user_id: ",user_id);
+        const result = await pool.query("SELECT interest_name FROM interests WHERE interest_id = $1 ",[interest_name]);
+       // console.log("return from query insert into interests:  ",newInterest.rows[0].interest_id);
+        const interest_id = result.rows[0].interest_id;
+        //res.json(newInterest);
+        console.log("interest_id:  ",interest_id);
+       //const ID = await pool.query("SELECT user_id FROM USERS WHERE email $1",[email]);
+        const newUserInterest = await pool.query("UPDATE user_interests SET rating = rating + 1 WHERE user_id = $2 AND interest_id = $1 AND rating < 8",[interest_id,user_id]);
+        console.log("return from query insert into user interests:  ",newUserInterest);
+        res.json(newUserInterest);
+    } catch(err){
+        console.log(err.message);
+    }
+})
+
+router.put("/rating/sub",async(req,res)=>{
+    try{
+        console.log("request: ",req.body);
+        var user_id=req.body[0];
+        var interest_name=req.body[1];
+        console.log("API => interest name: ",interest_name);
+        console.log("API => user_id: ",user_id);
+        const result = await pool.query("SELECT interest_name FROM interests WHERE interest_id = $1 ",[interest_name]);
+       // console.log("return from query insert into interests:  ",newInterest.rows[0].interest_id);
+        const interest_id = result.rows[0].interest_id;
+        //res.json(newInterest);
+        console.log("interest_id:  ",interest_id);
+       //const ID = await pool.query("SELECT user_id FROM USERS WHERE email $1",[email]);
+        const newUserInterest = await pool.query("UPDATE user_interests SET rating = rating - 1 WHERE user_id = $2 AND interest_id = $1 AND rating > 0",[interest_id,user_id]);
+        console.log("return from query insert into user interests:  ",newUserInterest);
+        res.json(newUserInterest);
+    } catch(err){
+        console.log(err.message);
+    }
 });
 
 

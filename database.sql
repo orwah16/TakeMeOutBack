@@ -52,12 +52,14 @@ CREATE TABLE comments(
 CREATE TABLE interests(
   interest_id INT GENERATED ALWAYS AS IDENTITY,
   interest_name VARCHAR(255),
+  rating integer;
   PRIMARY KEY (interest_id)
 );
 
 CREATE TABLE friends(
   user1 INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
   user2 INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE
+  rating integer;
 );
 
 /*posts user tagged in and vice versa (interested in)*/
