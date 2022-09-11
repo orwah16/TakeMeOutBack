@@ -11,14 +11,25 @@ router.post("/",async(req,res)=>{
         var interest_name=req.body[0];
         console.log("API => interest name: ",interest_name);
         console.log("API => user_id: ",user_id);
-        const newInterest = await pool.query("INSERT INTO INTERESTS (interest_name) VALUES($1) RETURNING * ",[interest_name]);
+        var newInterest,interest_id;
+        var lines = [];
+        const result = await pool.query("SELECT interest_id FROM interests WHERE interest_name = $1",[interest_name]);
+        console.log("result from selecting interest: ",result);
+        //lines = result.rows;
+        if(result.rows.length == 0){ // if interest doesn't exist
+            console.log("if interest doesn't exist");
+            newInterest = await pool.query("INSERT INTO INTERESTS (interest_name) VALUES($1) RETURNING * ",[interest_name]);
+            interest_id = newInterest.rows[0].interest_id;
+        }else{ // if interest exists
+            console.log("if interest exists");
+            interest_id = result.rows[0].interest_id;
+        }
        // console.log("return from query insert into interests:  ",newInterest.rows[0].interest_id);
-        const interest_id = newInterest.rows[0].interest_id;
-        res.json(newInterest);
+        //res.json(newInterest);
         console.log("interest_id:  ",interest_id);
        //const ID = await pool.query("SELECT user_id FROM USERS WHERE email $1",[email]);
         const newUserInterest = await pool.query("INSERT INTO USER_INTERESTS (interest_id,user_id) VALUES($1,$2) RETURNING * ",[interest_id,user_id]);
-        console.log("return from query insert into user interests:  ",newInterest);
+        console.log("return from query insert into user interests:  ",newUserInterest);
         res.json(newUserInterest);
     } catch(err){
         console.log(err.message);
@@ -78,7 +89,7 @@ router.put("/rating/add",async(req,res)=>{
         var interest_name=req.body[1];
         console.log("API => interest name: ",interest_name);
         console.log("API => user_id: ",user_id);
-        const result = await pool.query("SELECT interest_name FROM interests WHERE interest_id = $1 ",[interest_name]);
+        const result = await pool.query("SELECT interest_id FROM interests WHERE interest_name = $1",[interest_name]);
        // console.log("return from query insert into interests:  ",newInterest.rows[0].interest_id);
         const interest_id = result.rows[0].interest_id;
         //res.json(newInterest);
@@ -99,7 +110,7 @@ router.put("/rating/sub",async(req,res)=>{
         var interest_name=req.body[1];
         console.log("API => interest name: ",interest_name);
         console.log("API => user_id: ",user_id);
-        const result = await pool.query("SELECT interest_name FROM interests WHERE interest_id = $1 ",[interest_name]);
+        const result = await pool.query("SELECT interest_id FROM interests WHERE interest_name = $1",[interest_name]);
        // console.log("return from query insert into interests:  ",newInterest.rows[0].interest_id);
         const interest_id = result.rows[0].interest_id;
         //res.json(newInterest);
