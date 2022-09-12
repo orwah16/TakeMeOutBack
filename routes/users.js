@@ -107,7 +107,7 @@ router.get("/friends/posts/:id",async(req,res)=>{//get all the users interests
         console.log("params for friends posts: ",req.params);
         var user_id=req.params.id;
         console.log("user_id for friends posts",user_id);
-        const result = await pool.query("SELECT * FROM posts WHERE post_id in (SELECT post_id FROM tags WHERE user_id  in (SELECT user2 from friends WHERE user1 = $1))",[user_id]);
+        const result = await pool.query("SELECT * FROM posts WHERE post_id in (SELECT post_id FROM tags WHERE user_id  in (SELECT user2 from friends WHERE user1 = $1)) order by post_date desc;",[user_id]);
         console.log("friends posts results from db: ",result);
         resultArray=Object.values(result.rows);
         console.log("user interests from db: ",resultArray);
