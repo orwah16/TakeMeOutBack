@@ -7,9 +7,9 @@ const pool = require("../db");
 router.post("/",async(req,res)=>{
     try{
         console.log(req.body);
-        const [first_name,last_name,email] = req.body;
+        const [first_name,last_name,email,phone_number] = req.body;
         console.log(first_name);
-        const newUser = await pool.query("INSERT INTO USERS (first_name,last_name,email) VALUES($1,$2,$3) RETURNING * ",[first_name,last_name,email]);
+        const newUser = await pool.query("INSERT INTO USERS (first_name,last_name,email,phone_number) VALUES($1,$2,$3,$4) RETURNING * ",[first_name,last_name,email,phone_number]);
         res.json(newUser);
         console.log(req.body);
     } catch(err){

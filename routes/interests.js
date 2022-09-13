@@ -140,7 +140,7 @@ router.put("/rating/sub",async(req,res)=>{
         //res.json(newInterest);
         console.log("interest_id:  ",interest_id);
        //const ID = await pool.query("SELECT user_id FROM USERS WHERE email $1",[email]);
-        const newUserInterest = await pool.query("UPDATE user_interests SET rating = rating - 1 WHERE user_id = $2 AND interest_id = $1 AND rating > 0",[interest_id,user_id]);
+        const newUserInterest = await pool.query("UPDATE user_interests SET rating = rating - 1 WHERE user_id = $2 AND interest_id = $1 AND rating > 3",[interest_id,user_id]);
         console.log("return from query insert into user interests:  ",newUserInterest);
         res.json(newUserInterest);
     } catch(err){
