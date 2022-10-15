@@ -15,8 +15,10 @@
     "express": "^4.17.1",
     "mysql2": "^2.3.0",
     "nodemon": "^2.0.19",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "sequelize": "^6.23.0"
   },
+  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orwah16/TakeMeOutBack.git"
