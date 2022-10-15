@@ -1,7 +1,7 @@
 ## TakeMeOutBack
 
 ## this is the backend for TakeMeOut app \
-# it uses: \
+# it uses: 
  - Postgres for relational database
  - node.js with expres.js for CRUD operations
  - Firebase for authentication and saving images
