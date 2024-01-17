@@ -37,20 +37,29 @@ resource "aws_eks_node_group" "nodes" {
   node_group_name = "nodes"
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids      = aws_subnet.EKS_private_subnet[*].id
+  ami_type        = "AL2_x86_64"
+  # instance_types = ["t3.micro"]
+  #capacity_type  = "ON_DEMAND"
+  # disk_size      = 20
 
   scaling_config {
     desired_size = 2
     max_size     = 2
     min_size     = 1
   }
-  ami_type       = "AL2_x86_64"
-  # instance_types = ["t3.micro"]
-  # capacity_type  = "ON_DEMAND"
-  # disk_size      = 20
+
+  # taint {
+  #   key    = "team"
+  #   value  = "dev"
+  #   effect = "NO_SCHEDULE"
+  # }
+
   launch_template {
     name    = aws_launch_template.eks_launch_template.name
     version = aws_launch_template.eks_launch_template.latest_version
   }
+
+
 
   depends_on = [
     aws_iam_role_policy_attachment.node-AmazonEKSWorkerNodePolicy,

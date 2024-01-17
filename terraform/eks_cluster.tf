@@ -33,7 +33,7 @@ resource "aws_eks_cluster" "EKS" {
 
   vpc_config {
     security_group_ids      = [aws_security_group.allow_tls.id]
-    subnet_ids              = aws_subnet.EKS_private_subnet[*].id
+    subnet_ids              = concat(aws_subnet.EKS_private_subnet.*.id, aws_subnet.EKS_public_subnet.*.id)
     endpoint_private_access = "true"
     endpoint_public_access  = "true"
   }

@@ -22,7 +22,9 @@ resource "aws_subnet" "EKS_public_subnet" {
   vpc_id                  = aws_vpc.EKS_vpc.id
 
   tags = {
-    "Name" = "dev-public"
+    "Name"                                        = "dev-public-${count.index}"
+    "kubernetes.io/role/elb"                      = "1"
+    "kubernetes.io/cluster/terraform-eks-cluster" = "owned"
   }
 }
 
@@ -59,12 +61,14 @@ resource "aws_subnet" "EKS_private_subnet" {
   count = var.private_subnet_count
 
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = "10.0.${count.index + var.public_subnet_count}.0/24"
+  cidr_block              = "10.0.${count.index + var.public_subnet_count + 2}.0/24"
   map_public_ip_on_launch = true
   vpc_id                  = aws_vpc.EKS_vpc.id
 
   tags = {
-    "Name" = "dev-private"
+    "Name"                                        = "dev-private-${count.index}"
+    "kubernetes.io/role/internal-elb"             = "1"
+    "kubernetes.io/cluster/terraform-eks-cluster" = "owned"
   }
 }
 
@@ -73,21 +77,22 @@ resource "aws_route_table_association" "EKS_private_association" {
   #count = 2
 
   subnet_id      = aws_subnet.EKS_private_subnet[count.index].id
-  route_table_id = aws_route_table.EKS_private_rt.id
+  route_table_id = aws_route_table.EKS_private_rt[count.index].id
 }
 
 resource "aws_route_table" "EKS_private_rt" {
   vpc_id = aws_vpc.EKS_vpc.id
+  count  = var.private_subnet_count
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.nat.id #needs to be changed to nat
+    gateway_id = aws_nat_gateway.nat[count.index].id
   }
   route {
     cidr_block = "10.0.0.0/16"
     gateway_id = "local"
   }
-  
+
   tags = {
     Name = "private_rt"
   }
@@ -166,13 +171,13 @@ resource "aws_security_group" "bastion" {
 ############# bastion #############
 
 resource "aws_instance" "bastion" {
-    
+
   count                  = var.public_subnet_count
   ami                    = data.aws_ami.bastion_ami.id
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.EKS_public_subnet[count.index].id
   vpc_security_group_ids = [aws_security_group.bastion.id]
-  key_name = aws_key_pair.bastion_auth.key_name
+  key_name               = aws_key_pair.bastion_auth.key_name
 
   # ebs_block_device{
   #   volume_size = 2
@@ -184,13 +189,16 @@ resource "aws_instance" "bastion" {
 
 #separate volume so it won't be deleted when restarting the instance
 resource "aws_ebs_volume" "bastion_volume" {
-  size = 2
-  type = "gp3"
+  count             = var.public_subnet_count
+  size              = 2
+  type              = "gp3"
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 }
 
 resource "aws_volume_attachment" "attachment" {
-  volume_id   = aws_ebs_volume.bastion_volume.id
-  instance_id = aws_instance.bastion.id
+  count       = var.public_subnet_count
+  volume_id   = aws_ebs_volume.bastion_volume[count.index].id
+  instance_id = aws_instance.bastion[count.index].id
   device_name = "/dev/sdb"
 }
 
