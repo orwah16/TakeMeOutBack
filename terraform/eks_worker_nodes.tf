@@ -69,22 +69,21 @@ resource "aws_eks_node_group" "nodes" {
 }
 
 
-
-
 resource "aws_launch_template" "eks_launch_template" {
   name = "eks_launch_template"
 
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
   #image_id = data.aws_ami.server_ami.id
   #image_id      = "ami-03eaa1eb8976e21a9"
-  instance_type = "t2.micro"
-  block_device_mappings {
-    device_name = "/dev/xvda"
-    ebs {
-      volume_size = 5
-      volume_type = "gp3"
-    }
-  }
+  instance_type = "t3.micro"
+  key_name = "bastionkey"
+  # block_device_mappings {
+  #   device_name = "/dev/xvda"
+  #   ebs {
+  #     volume_size = 5
+  #     volume_type = "gp3"
+  #   }
+  # }
 
 
   #   user_data = base64encode(<<-EOF

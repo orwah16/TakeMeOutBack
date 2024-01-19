@@ -177,8 +177,17 @@ resource "aws_instance" "bastion" {
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.EKS_public_subnet[count.index].id
   vpc_security_group_ids = [aws_security_group.bastion.id]
-  key_name               = aws_key_pair.bastion_auth.key_name
+  #key_name               = aws_key_pair.bastion_auth.key_name
+  key_name               = "bastionkey"
 
+  # provisioner "local-exec"{     #this is to enable ssh will need to be done using something other than a provisioner later
+  #   command = templatefile("ssh-config.tpl", {
+  #     hostname = self.public_ip,
+  #     user = "orwah",
+  #     identityfile = "~/.ssh/bastionkey"
+  #   })
+  #   interpreter = ["bash","-c"]
+  # }
   # ebs_block_device{
   #   volume_size = 2
   #   volume_type = "gp3"
@@ -187,25 +196,40 @@ resource "aws_instance" "bastion" {
 
 }
 
-#separate volume so it won't be deleted when restarting the instance
-resource "aws_ebs_volume" "bastion_volume" {
-  count             = var.public_subnet_count
-  size              = 2
-  type              = "gp3"
-  availability_zone = data.aws_availability_zones.available.names[count.index]
-}
-
-resource "aws_volume_attachment" "attachment" {
-  count       = var.public_subnet_count
-  volume_id   = aws_ebs_volume.bastion_volume[count.index].id
-  instance_id = aws_instance.bastion[count.index].id
-  device_name = "/dev/sdb"
-}
-
+############# bastion key pair #############
 resource "aws_key_pair" "bastion_auth" {
   key_name   = "bastionkey"
-  public_key = file("~/.ssh/bastionkey.pub")
+  public_key = tls_private_key.rsa-4096.public_key_openssh
+  #public_key = file("~/.ssh/bastionkey.pub")
 }
+
+resource "local_file" "TF_key" {
+  content  = tls_private_key.rsa-4096.private_key_pem
+  filename = "TFkey"
+}
+
+resource "tls_private_key" "rsa-4096"{
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+
+
+############# bastion extra ebs #############
+#separate volume so it won't be deleted when restarting the instance
+# resource "aws_ebs_volume" "bastion_volume" {
+#   count             = var.public_subnet_count
+#   size              = 2
+#   type              = "gp3"
+#   availability_zone = data.aws_availability_zones.available.names[count.index]
+# }
+
+# resource "aws_volume_attachment" "attachment" {
+#   count       = var.public_subnet_count
+#   volume_id   = aws_ebs_volume.bastion_volume[count.index].id
+#   instance_id = aws_instance.bastion[count.index].id
+#   device_name = "/dev/sdb"
+# }
+
 
 
 ############# nacl #############
