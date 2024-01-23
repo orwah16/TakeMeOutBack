@@ -1,2 +1,8 @@
 node_modules
 npm-debug.log
+terraform
+Dockerfile
+.dockerignore
+.github
+.gitignore
+.gitattributes
