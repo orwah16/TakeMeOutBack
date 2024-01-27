@@ -92,14 +92,15 @@ resource "aws_launch_template" "eks_launch_template" {
     }
   }
 
-  user_data =  base64encode(<<-EOF
-  MIME-Version: 1.0
-  Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
+  user_data =  base64encode(<<EOF
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
 
-  --==MYBOUNDARY==
+--==MYBOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
 
-  Content-Type: text/x-shellscript; charset="us-ascii"
 #!/bin/bash
+#kubeproxy and coredns are installed automatically
 UID=$(id -u)
 if [ x$UID != x0 ] 
 then
@@ -151,10 +152,10 @@ EOT
 systemctl enable node_exporter
 systemctl start node_exporter
 
-  --==MYBOUNDARY==--
+--==MYBOUNDARY==--
 
-  EOF
-  )
+EOF
+)
 
 }
 
