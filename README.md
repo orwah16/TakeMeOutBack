@@ -5,6 +5,8 @@
  - Postgres for relational database
  - node.js with expres.js for CRUD operations
  - Firebase for authentication and saving images
- - Docker Compose for containerizing the app and db
+ - Docker Compose for containerizing the app and db for testing
  - Github Actions for CI/CD
- - was deployed to AWS RC2
+ - Terraform for provisioning the infrastructure
+ - deployed to AWS EKS
+ - adding prometheus for monitoring
