@@ -10,21 +10,29 @@ spec:
     - protocol: TCP
       port: 5432
       targetPort: 5432
+
 # ---
 # apiVersion: v1
 # kind: ConfigMap
 # metadata:
-#   name: postgres-db-config
+#   name: postgres-config
 #   namespace: staging
 #   labels:
 #     app: database
 # data:
-#   - name: POSTGRES_USER
-#     value: postgres
-#   - name: POSTGRES_PASSWORD
-#     valeu: 123456
-#   - name: POSTGRES_DB
-#     valeu: takemeoutdb
+#   POSTGRES_USER: postgres
+#   POSTGRES_DB: takemeoutdb
+
+---
+apiVersion: v1
+data:
+  password: MTIzNDU2
+kind: Secret
+metadata:
+  name: postgres-secret
+  namespace: staging
+type: Opaque
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -50,18 +58,21 @@ spec:
       containers:
         - name: database
           image: postgres:14
-          # command: [ "/bin/bash", "-c", "--" ]
-          # args: [ "while true; do sleep 30; done;" ]
           volumeMounts:
             - name: database-persistent-storage
               mountPath: /var/lib/postgresql/data
+            # - name: postgres-config
+            #   mountPath: /etc/postgresql
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_USER
               value: postgres
             - name: POSTGRES_PASSWORD
-              value: "123456"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
             - name: POSTGRES_DB
               value: takemeoutdb
 
@@ -70,6 +81,9 @@ spec:
         - name: database-persistent-storage
           persistentVolumeClaim:
             claimName: ebs-claim
+        # - name: postgres-config 
+        #   configMap:
+        #     name: postgres-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -78,8 +92,8 @@ metadata:
   namespace: staging
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: db-storage
   resources:
     requests:
-      storage: 1Gi
+      storage: 5Gi

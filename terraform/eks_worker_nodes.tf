@@ -43,8 +43,8 @@ resource "aws_eks_node_group" "nodes" {
   # disk_size      = 20
 
   scaling_config {
-    desired_size = 2
-    max_size     = 2
+    desired_size = 1
+    max_size     = 3
     min_size     = 1
   }
 
@@ -75,7 +75,7 @@ resource "aws_launch_template" "eks_launch_template" {
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
   #image_id = data.aws_ami.server_ami.id
   #image_id      = "ami-03eaa1eb8976e21a9"
-  instance_type = "t3.micro"
+  instance_type = "t3a.small"
   key_name = "bastionkey"
   # block_device_mappings {
   #   device_name = "/dev/xvda"
@@ -89,6 +89,8 @@ resource "aws_launch_template" "eks_launch_template" {
 
     tags = {
       Name = "EKS-MANAGED-NODE"
+      service       = "myapp"
+      node-exporter = "true"
     }
   }
 
@@ -120,6 +122,10 @@ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stabl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
 echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+#increasing the max number of pods per node
+sudo /etc/eks/bootstrap.sh terraform-eks-cluster \ --use-max-pods false \ 
+--kubelet-extra-args '--max-pods=110'
 
 echo "installing exporter"
 #installing pormetheus exporter

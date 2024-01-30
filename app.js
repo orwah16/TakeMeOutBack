@@ -1,4 +1,5 @@
 const express = require('express');
+const Prometheus = require('prom-client')
 app = express();
 const cors = require('cors');
 //const dbService = require('./database');

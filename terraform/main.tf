@@ -175,7 +175,8 @@ resource "aws_instance" "bastion" {
   count                  = var.public_subnet_count
   ami                    = data.aws_ami.bastion_ami.id
   instance_type          = "t2.micro"
-  subnet_id              = aws_subnet.EKS_public_subnet[count.index].id
+  # subnet_id              = aws_subnet.EKS_public_subnet[count.index].id #one host is enough for now
+  subnet_id              = aws_subnet.EKS_public_subnet[1].id
   vpc_security_group_ids = [aws_security_group.bastion.id]
   #key_name               = aws_key_pair.bastion_auth.key_name
   key_name               = "bastionkey"

@@ -61,6 +61,13 @@ spec:
               containerPort:  3000
             - name: http-metrics
               containerPort:  3001
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 200m
+            limits:
+              memory: 256Mi
+              cpu: 200m
           env:
             - name: PGDATABASE
               value: takemeoutdb
