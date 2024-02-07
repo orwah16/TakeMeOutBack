@@ -43,7 +43,7 @@ resource "aws_eks_node_group" "nodes" {
   # disk_size      = 20
 
   scaling_config {
-    desired_size = 1
+    desired_size = 2
     max_size     = 3
     min_size     = 1
   }
@@ -116,6 +116,7 @@ echo "starting bootstrap"
 #create kubeconfig file
 echo "creating kubeconfig file"
 aws eks update-kubeconfig --name terraform-eks-cluster --region us-east-1
+
 echo "installing kubectl"
 #installing kubectl last stable version
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -123,9 +124,11 @@ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stabl
 echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-#increasing the max number of pods per node
-sudo /etc/eks/bootstrap.sh terraform-eks-cluster \ --use-max-pods false \ 
---kubelet-extra-args '--max-pods=110'
+
+
+--==MYBOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
+
 
 echo "installing exporter"
 #installing pormetheus exporter
@@ -158,6 +161,12 @@ EOT
 systemctl enable node_exporter
 systemctl start node_exporter
 
+--==MYBOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
+
+#increasing the max number of pods per node
+sudo /etc/eks/bootstrap.sh terraform-eks-cluster --use-max-pods false \ 
+--kubelet-extra-args '--max-pods=110'
 --==MYBOUNDARY==--
 
 EOF

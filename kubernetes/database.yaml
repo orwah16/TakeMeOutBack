@@ -59,8 +59,11 @@ spec:
         - name: database
           image: postgres:14
           volumeMounts:
-            - name: database-persistent-storage
+            # - name: database-persistent-storage
+            #   mountPath: /var/lib/postgresql/data
+            - name: test-volume
               mountPath: /var/lib/postgresql/data
+
             # - name: postgres-config
             #   mountPath: /etc/postgresql
           ports:
@@ -78,9 +81,14 @@ spec:
 
           imagePullPolicy: Always 
       volumes:
-        - name: database-persistent-storage
-          persistentVolumeClaim:
-            claimName: ebs-claim
+        # - name: database-persistent-storage
+        #   persistentVolumeClaim:
+        #     claimName: ebs-claim
+        - name: test-volume
+          emptyDir:
+            sizeLimit: 500Mi
+
+
         # - name: postgres-config 
         #   configMap:
         #     name: postgres-config

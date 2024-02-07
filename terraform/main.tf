@@ -117,11 +117,32 @@ resource "aws_security_group" "allow_tls" {
   description = "dev security group"
   vpc_id      = aws_vpc.EKS_vpc.id
 
-  ingress {
+  ingress { #for cluster communication
     description = "TLS from VPC"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
+    cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
+  }
+  ingress { #for weave
+    description = "TLS from VPC"
+    from_port   = 6783
+    to_port     = 6783
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
+  }
+  ingress {
+    description = "TLS from VPC"
+    from_port   = 6783
+    to_port     = 6783
+    protocol    = "udp"
+    cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
+  }
+  ingress {
+    description = "TLS from VPC"
+    from_port   = 6784
+    to_port     = 6784
+    protocol    = "udp"
     cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
   }
   #bastion ssh
@@ -131,7 +152,13 @@ resource "aws_security_group" "allow_tls" {
     protocol        = "tcp"
     security_groups = [aws_security_group.bastion.id]
   }
-
+  #load balancer
+  ingress {
+    from_port       = 3000
+    to_port         = 3000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion.id]
+  }
 
   egress {
     from_port        = 0 #all ports
@@ -175,7 +202,7 @@ resource "aws_instance" "bastion" {
   count                  = var.public_subnet_count
   ami                    = data.aws_ami.bastion_ami.id
   instance_type          = "t2.micro"
-  # subnet_id              = aws_subnet.EKS_public_subnet[count.index].id #one host is enough for now
+  # subnet_id              = aws_subnet.EKS_public_subnet[count.index].id
   subnet_id              = aws_subnet.EKS_public_subnet[1].id
   vpc_security_group_ids = [aws_security_group.bastion.id]
   #key_name               = aws_key_pair.bastion_auth.key_name

@@ -4,8 +4,8 @@ kind: StorageClass
 metadata:
   name: db-storage
   namespace: staging
-  # annotations:
-  #   storageclass.kubernetes.io/is-default-class: "true"
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
 volumeBindingMode: WaitForFirstConsumer
 provisioner: ebs.csi.aws.com
 parameters:
