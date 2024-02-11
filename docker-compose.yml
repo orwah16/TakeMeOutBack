@@ -1,6 +1,30 @@
 version: '3.8'
 
 services: 
+  prometheus:
+    image: prom/prometheus:v2.45.3
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    ports:
+      - 9090:9090
+    expose:
+      - 9090
+  grafana:
+    image: grafana/grafana:7.1.5
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning
+    environment:
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    ports:
+      - 5000:5000
+    expose:
+      - 5000
   node_backend: 
     container_name: node_backend
     image: node-test:1.0.0
@@ -30,3 +54,5 @@ services:
 
 volumes:
   pgdata1: {}
+  prometheus_data: {}
+  grafana_data: {}
