@@ -161,12 +161,13 @@ EOT
 systemctl enable node_exporter
 systemctl start node_exporter
 
---==MYBOUNDARY==
-Content-Type: text/x-shellscript; charset="us-ascii"
+# --==MYBOUNDARY==
+# Content-Type: text/x-shellscript; charset="us-ascii"
 
-#increasing the max number of pods per node
-sudo /etc/eks/bootstrap.sh terraform-eks-cluster --use-max-pods false \ 
---kubelet-extra-args '--max-pods=110'
+# #increasing the max number of pods per node
+# sudo /etc/eks/bootstrap.sh terraform-eks-cluster --use-max-pods false \ 
+# --kubelet-extra-args '--max-pods=110'
+
 --==MYBOUNDARY==--
 
 EOF

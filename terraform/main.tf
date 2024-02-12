@@ -145,6 +145,20 @@ resource "aws_security_group" "allow_tls" {
     protocol    = "udp"
     cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
   }
+  #load balancer
+  ingress {
+    description     = "load balancer"
+    from_port       = 3000
+    to_port         = 3000
+    protocol        = "tcp"
+    cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
+  }
+  ingress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   #bastion ssh
   ingress {
     from_port       = 22
@@ -152,13 +166,9 @@ resource "aws_security_group" "allow_tls" {
     protocol        = "tcp"
     security_groups = [aws_security_group.bastion.id]
   }
-  #load balancer
-  ingress {
-    from_port       = 3000
-    to_port         = 3000
-    protocol        = "tcp"
-    security_groups = [aws_security_group.bastion.id]
-  }
+
+
+  
 
   egress {
     from_port        = 0 #all ports
