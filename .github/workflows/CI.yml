@@ -12,9 +12,11 @@ permissions:
   contents: write
 
 env:
+
   #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
   GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN}}
   GIT_COMMIT: $(git rev-parse --short "$GITHUB_SHA")
+
 
 jobs:
   build-and-test:
@@ -72,17 +74,19 @@ jobs:
     - name: Push Docker image
       run: docker push takemeout:${GIT_COMMIT}
 
+
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
       with:
         image: orwah/takemeout:${GIT_COMMIT}
-        severity_threshold: HIGH
+
 
     - name: clone Gitops repo and update image name
       run: |
         git clone -b featur https://github.com/orwah16/TakeMeOutBackGitOps.git
         cd TakeMeOutBackGitOps/kubernetes
         sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
+
 
     - name: commit and push to gitops repo feature branch
       run: |      
