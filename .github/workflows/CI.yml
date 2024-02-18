@@ -70,7 +70,12 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Push Docker image
-      run: docker push takemeout:${GIT_COMMIT}
+      run: |
+        if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+          GITHUB_SHA=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
+        fi
+        GIT_COMMIT = $GITHUB_SHA
+        docker push takemeout:${GIT_COMMIT}
 
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
