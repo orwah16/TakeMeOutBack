@@ -76,15 +76,14 @@ jobs:
         if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
           GITHUB_SHA=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
         fi
-        GIT_COMMIT = $GITHUB_SHA
-        docker push takemeout:${GIT_COMMIT}
+        echo "GIT_COMMIT=${GITHUB_SHA}" >> $GITHUB_ENV
+        docker push "takemeout:${GIT_COMMIT}"
 
 
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
       with:
-        image: orwah/takemeout:${GIT_COMMIT}
-
+        image: "orwah/takemeout:${GIT_COMMIT}"
 
     - name: clone Gitops repo and update image name
       run: |
