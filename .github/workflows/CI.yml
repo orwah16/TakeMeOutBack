@@ -50,6 +50,7 @@ jobs:
   
 
   docker build and push:
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
