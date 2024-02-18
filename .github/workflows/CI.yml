@@ -1,0 +1,110 @@
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "feature" ]
+  pull_request:
+    branches: [ "feature" ]
+
+permissions:
+  checks: write
+  contents: write
+
+env:
+  #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+  GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN}}
+  GIT_COMMIT: $(git rev-parse --short "$GITHUB_SHA")
+
+jobs:
+  build and test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Run linters
+      uses: github/super-linter@v4
+      env:
+        VALIDATE_ALL_CODEBASE: true
+        VALIDATE_JAVASCRIPT_ES: true
+      
+
+    - name: Install Node.js dependencies
+      run: npm ci
+
+    - name: build 
+      run: npm run build --if-present
+    #- run: npm test
+  
+
+  docker build and push:
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Build Docker image
+      run: docker build -t takemeout .
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push Docker image
+      run: docker push takemeout:${GIT_COMMIT}
+
+    - name: Scan for vulnerabilities
+      uses: crazy-max/ghaction-container-scan@v3
+      with:
+        image: orwah/takemeout:${GIT_COMMIT}
+        severity_threshold: HIGH
+
+    - name: clone Gitops repo and update image name
+      run: |
+        git clone -b featur https://github.com/orwah16/TakeMeOutBackGitOps.git
+        cd TakeMeOutBackGitOps/kubernetes
+        sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
+
+    - name: commit and push to gitops repo feature branch
+      run: |      
+        git config --global user.email 'orwah_wattad@hotmail.com.com'
+        git config --global user.name 'orwah16'
+        git remote set-url origin https://$GITHUB_TOKEN@github.com/orwah16/TakeMeOutBackGitOps.git
+        git checkout feature
+        git add -A
+        git commit -am "Updated image version for Build with commit ID - $GIT_COMMIT" || true
+        cat nodePod.yaml
+        git push origin feature
+
+    - name: Merge Feature Branch to Master for Application Repo
+      run: |     
+        echo $GITHUB_TOKEN | awk -F ':' '{print \$2}' > .gh_token 
+        unset GITHUB_TOKEN && gh auth login --with-token < .gh_token && git checkout feature && gh pr create -f
+        unset GITHUB_TOKEN && gh auth login --with-token < .gh_token && gh pr merge -m
+        rm -rf .gh_token
+
+    - name: Merge Feature Branch to Master for Gitops Repo
+      run: |   
+        cd TakeMeOutBackGitOps    
+        echo $GITOPS_TOKEN | awk -F ':' '{print \$2}' > .gh_token 
+        unset GITOPS_TOKEN && gh auth login --with-token < .gh_token && git checkout feature && gh pr create -f
+        unset GITOPS_TOKEN && gh auth login --with-token < .gh_token && gh pr merge -m
+        rm -rf .gh_token
