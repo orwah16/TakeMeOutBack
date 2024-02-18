@@ -37,3 +37,4 @@ terraform.rc
 **/.terraform.lock.hcl
 terraform/TFkey
 aws
+node_modules
