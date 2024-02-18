@@ -80,12 +80,12 @@ jobs:
         echo "GIT_COMMIT=${GITHUB_SHA}" >> $GITHUB_ENV
 
     - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{GIT_COMMIT}}
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{GIT_COMMIT}}
 
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
