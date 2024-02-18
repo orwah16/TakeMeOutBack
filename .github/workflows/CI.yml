@@ -15,7 +15,7 @@ env:
 
   #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
   GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN}}
-  GIT_COMMIT: $(git rev-parse --short "$GITHUB_SHA")
+  GIT_COMMIT: "latest"
 
 
 jobs:
