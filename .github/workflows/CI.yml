@@ -15,7 +15,7 @@ env:
 
   #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
   GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN}}
-  GIT_COMMIT: "latest"
+  #GIT_COMMIT: "latest"
 
 
 jobs:
@@ -79,7 +79,8 @@ jobs:
           GITHUB_SHA=${{ github.sha }}
         fi
         echo "GIT_COMMIT=${GITHUB_SHA:(-5)}" >> $GITHUB_ENV
-        COMMIT="${GITHUB_SHA:(-5)}"
+        
+        GET_COMMI="${GITHUB_SHA:(-5)}"
         echo "$COMMIT"
         COMMIT=${{ secrets.DOCKER_USERNAME }}/takemeout:${{ env.GIT_COMMIT }}
         echo "$COMMIT"
