@@ -92,14 +92,14 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-        #tag: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
+      # tag: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
 
         
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
       with:
         image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-        #tag: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
+      # image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
 
     - name: clone Gitops repo and update image name
       run: |
