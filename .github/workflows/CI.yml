@@ -81,10 +81,9 @@ jobs:
         echo "GIT_COMMIT=${GITHUB_SHA:(-5)}" >> "$GITHUB_OUTPUT"
         echo "${GITHUB_SHA:(-5)}"
         GET_COMMIT="${GITHUB_SHA:(-5)}"
-        echo "$COMMIT"
         COMMIT=${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
         echo "$COMMIT"
-        cat $GITHUB_ENV
+        cat $GITHUB_OUTPUT
 
     - name: Build and push
       uses: docker/build-push-action@v5
@@ -94,20 +93,20 @@ jobs:
         push: true
         #tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
         tag: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
-        #tags: ${{ fromJSON(env.GIT_COMMIT) }}
+
         
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
       with:
-        image: ${{ fromJSON(env.GIT_COMMIT) }}
-        #image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
+        image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
+        #tag: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
 
     - name: clone Gitops repo and update image name
       run: |
         echo $GIT_COMMIT
         git clone -b featur https://github.com/orwah16/TakeMeOutBackGitOps.git
         cd TakeMeOutBackGitOps/kubernetes
-        sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
+        sed "s/{{GIT_COMMIT}}/${{ github.sha }}/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
       #  sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
 
 
