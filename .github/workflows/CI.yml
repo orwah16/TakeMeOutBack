@@ -79,9 +79,10 @@ jobs:
           GITHUB_SHA=${{ github.sha }}
         fi
         echo "GIT_COMMIT=${GITHUB_SHA:(-5)}" >> $GITHUB_ENV
-        GIT_COMMIT="${GITHUB_SHA:(-5)}"
-        GIT_COMMIT=${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
-        echo "$GIT_COMMIT"
+        COMMIT="${GITHUB_SHA:(-5)}"
+        echo "$COMMIT"
+        COMMIT=${{ secrets.DOCKER_USERNAME }}/takemeout:${{ env.GIT_COMMIT }}
+        echo "$COMMIT"
         cat $GITHUB_ENV
 
     - name: Build and push
@@ -91,7 +92,7 @@ jobs:
         file: ./Dockerfile
         push: true
         #tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-        tag: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
+        tag: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ env.GIT_COMMIT }}
         #tags: ${{ fromJSON(env.GIT_COMMIT) }}
         
     - name: Scan for vulnerabilities
