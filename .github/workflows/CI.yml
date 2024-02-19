@@ -104,7 +104,7 @@ jobs:
     - name: clone Gitops repo and update image name
       run: |
         echo $GIT_COMMIT
-        git clone -b featur https://github.com/orwah16/TakeMeOutBackGitOps.git
+        git clone -b feature https://github.com/orwah16/TakeMeOutBackGitOps.git
         cd TakeMeOutBackGitOps/kubernetes
         sed "s/{{GIT_COMMIT}}/${{ github.sha }}/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
       #  sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
