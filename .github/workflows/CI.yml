@@ -130,8 +130,8 @@ jobs:
 
     - name: Merge Feature Branch to Master for Gitops Repo
       run: |   
-        cd TakeMeOutBackGitOps    
-        echo $GITOPS_TOKEN | awk -F ':' '{print \$2}' > .gh_token 
+        cd TakeMeOutBackGitOps 
+        echo $GITOPS_TOKEN > .gh_token    
         unset GITOPS_TOKEN && gh auth login --with-token < .gh_token && git checkout feature && gh pr create -f
         unset GITOPS_TOKEN && gh auth login --with-token < .gh_token && gh pr merge -m
         rm -rf .gh_token
