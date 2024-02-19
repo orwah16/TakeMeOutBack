@@ -80,7 +80,7 @@ jobs:
         fi
         echo "GIT_COMMIT=${GITHUB_SHA:(-5)}" >> $GITHUB_ENV
         
-        GET_COMMI="${GITHUB_SHA:(-5)}"
+        GET_COMMIT="${GITHUB_SHA:(-5)}"
         echo "$COMMIT"
         COMMIT=${{ secrets.DOCKER_USERNAME }}/takemeout:${{ env.GIT_COMMIT }}
         echo "$COMMIT"
