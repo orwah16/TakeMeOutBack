@@ -76,13 +76,10 @@ jobs:
       run: |
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" || "$GITHUB_EVENT_NAME" == "push" ]]; then
           GITHUB_SHA=${{ github.sha }}
-          echo $GITHUB_SHA
         fi
-        echo "GIT_COMMIT=${GITHUB_SHA}" >> $GITHUB_ENV
-        echo "$GIT_COMMIT"
-        GIT_COMMIT=$GITHUB_SHA
-        echo ${{ secrets.DOCKER_USERNAME }}/takemeout:"${GIT_COMMIT}"
-        cat $GITHUB_ENV
+        GIT_COMMIT="${GITHUB_SHA:(-5)}"
+        TAG=${{ secrets.DOCKER_USERNAME }}/takemeout:"${GIT_COMMIT}"
+        cat "$TAG"
 
     - name: Build and push
       uses: docker/build-push-action@v5
