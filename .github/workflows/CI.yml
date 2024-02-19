@@ -73,10 +73,12 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: git tag
+      id: tag
       run: |
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" || "$GITHUB_EVENT_NAME" == "push" ]]; then
           GITHUB_SHA=${{ github.sha }}
         fi
+        echo "git_commit=${GITHUB_SHA:(-5)}" >> $GITHUB_ENV
         GIT_COMMIT="${GITHUB_SHA:(-5)}"
         GIT_COMMIT=${{ secrets.DOCKER_USERNAME }}/takemeout:"${GIT_COMMIT}"
         echo "$GIT_COMMIT"
@@ -88,7 +90,8 @@ jobs:
         file: ./Dockerfile
         push: true
         #tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-        tags: ${{ fromJSON(env.GIT_COMMIT) }}
+        tag: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.git_commit }}
+        #tags: ${{ fromJSON(env.GIT_COMMIT) }}
         
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
