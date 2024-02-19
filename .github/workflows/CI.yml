@@ -80,6 +80,7 @@ jobs:
         fi
         echo "GIT_COMMIT=${GITHUB_SHA}" >> $GITHUB_ENV
         echo "$GIT_COMMIT"
+        GIT_COMMIT=$GITHUB_SHA
         echo ${{ secrets.DOCKER_USERNAME }}/takemeout:"${GIT_COMMIT}"
         cat $GITHUB_ENV
 
@@ -89,7 +90,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:"${GIT_COMMIT}"
+        tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${GIT_COMMIT}
 
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
