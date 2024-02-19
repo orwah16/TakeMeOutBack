@@ -75,7 +75,7 @@ jobs:
     - name: git tag
       run: |
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" || "$GITHUB_EVENT_NAME" == "push" ]]; then
-          GITHUB_SHA= ${{github.sha}}
+          GITHUB_SHA=${{github.sha}}
           echo $GITHUB_SHA
         fi
         echo "GIT_COMMIT=${GITHUB_SHA}" >> $GITHUB_ENV
