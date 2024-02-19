@@ -99,7 +99,6 @@ jobs:
       uses: crazy-max/ghaction-container-scan@v3
       with:
         image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-      # image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
 
     - name: clone Gitops repo and update image name
       run: |
