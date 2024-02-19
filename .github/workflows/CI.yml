@@ -114,7 +114,7 @@ jobs:
         cd ./TakeMeOutBackGitOps/kubernetes 
         git config --global user.email 'orwah_wattad@hotmail.com'
         git config --global user.name 'orwah16'
-        git remote set-url origin https://$GITOPS_TOKEN@github.com/orwah16/TakeMeOutBackGitOps.git
+        git remote set-url origin https://$GITHUB_TOKEN@github.com/orwah16/TakeMeOutBackGitOps.git
         git checkout feature
         git add -A
         git commit -am "Updated image version for Build with commit ID - $GIT_COMMIT" || true
