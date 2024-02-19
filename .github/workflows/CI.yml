@@ -105,7 +105,7 @@ jobs:
         echo $GIT_COMMIT
         git clone -b feature https://github.com/orwah16/TakeMeOutBackGitOps.git
         cd ./TakeMeOutBackGitOps/kubernetes
-        sed "s/{{GIT_COMMIT}}/${{ github.sha }}/g" ../../deployment-template.yaml > ./nodPod.yaml
+        sed "s/{{GIT_COMMIT}}/${{ github.sha }}/g" ../../deployment-template.yaml > ./nodePod.yaml
       # sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
 
 
@@ -123,7 +123,7 @@ jobs:
 
     - name: Merge Feature Branch to Master for Application Repo
       run: |     
-        echo $GITOPS_TOKEN | awk -F ':' '{print \$2}' > .gh_token 
+        echo $GITOPS_TOKEN > .gh_token 
         unset GITOPS_TOKEN && gh auth login --with-token < .gh_token && git checkout feature && gh pr create -f
         unset GITOPS_TOKEN && gh auth login --with-token < .gh_token && gh pr merge -m
         rm -rf .gh_token
