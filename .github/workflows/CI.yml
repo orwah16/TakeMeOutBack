@@ -104,6 +104,8 @@ jobs:
       run: |
         echo $GIT_COMMIT
         git clone -b feature https://github.com/orwah16/TakeMeOutBackGitOps.git
+        cd TakeMeOutBackGitOps
+        ls
         sed "s/{{GIT_COMMIT}}/${{ github.sha }}/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
       # sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
 
