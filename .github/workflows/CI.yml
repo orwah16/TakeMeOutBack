@@ -111,6 +111,7 @@ jobs:
 
     - name: commit and push to gitops repo feature branch
       run: |      
+        cd ./TakeMeOutBackGitOps/kubernetes 
         git config --global user.email 'orwah_wattad@hotmail.com.com'
         git config --global user.name 'orwah16'
         git remote set-url origin https://$GITHUB_TOKEN@github.com/orwah16/TakeMeOutBackGitOps.git
