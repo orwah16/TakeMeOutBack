@@ -72,33 +72,7 @@ jobs:
       #run: docker build -t takemeout .
       uses: docker/setup-buildx-action@v3
 
-    # - name: git tag
-    #   id: tag
-    #   run: |
-    #     if [[ "$GITHUB_EVENT_NAME" == "pull_request" || "$GITHUB_EVENT_NAME" == "push" ]]; then
-    #       GITHUB_SHA=${{ github.sha }}
-    #     fi
-    #     echo "GIT_COMMIT=${GITHUB_SHA:(-5)}" >> "$GITHUB_OUTPUT"
-    #     echo "${GITHUB_SHA:(-5)}"
-    #     GET_COMMIT="${GITHUB_SHA:(-5)}"
-    #     COMMIT=${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
-    #     echo "$COMMIT"
-    #     cat "$GITHUB_OUTPUT"
 
-    - name: Build and push
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-        
-      # tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ steps.tag.outputs.GIT_COMMIT }}
-
-    # - name: Scan for vulnerabilities
-    #   uses: crazy-max/ghaction-container-scan@v3
-    #   with:
-    #     image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
 
     - name: clone Gitops repo and update image name
       run: |
