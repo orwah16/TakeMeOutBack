@@ -88,12 +88,12 @@ jobs:
         file: ./Dockerfile
         push: true
         #tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-        tags: "echo ${GIT_COMMIT}"
+        tags: ${{ fromJSON(env.GIT_COMMIT) }}
         
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
       with:
-        image: "${GIT_COMMIT}"
+        image: ${{ fromJSON(env.GIT_COMMIT) }}
         #image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
 
     - name: clone Gitops repo and update image name
@@ -102,6 +102,7 @@ jobs:
         git clone -b featur https://github.com/orwah16/TakeMeOutBackGitOps.git
         cd TakeMeOutBackGitOps/kubernetes
         sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
+      #  sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
 
 
     - name: commit and push to gitops repo feature branch
