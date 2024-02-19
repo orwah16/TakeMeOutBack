@@ -88,7 +88,7 @@ jobs:
         file: ./Dockerfile
         push: true
         #tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-        tags: ${GIT_COMMIT}
+        tags: "echo ${GIT_COMMIT}"
         
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
