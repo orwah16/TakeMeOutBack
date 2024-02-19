@@ -78,8 +78,8 @@ jobs:
           GITHUB_SHA=${{ github.sha }}
         fi
         GIT_COMMIT="${GITHUB_SHA:(-5)}"
-        TAG=${{ secrets.DOCKER_USERNAME }}/takemeout:"${GIT_COMMIT}"
-        echo "$TAG"
+        GIT_COMMIT=${{ secrets.DOCKER_USERNAME }}/takemeout:"${GIT_COMMIT}"
+        echo "$GIT_COMMIT"
 
     - name: Build and push
       uses: docker/build-push-action@v5
@@ -88,12 +88,12 @@ jobs:
         file: ./Dockerfile
         push: true
         #tags: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
-        tags: ${{ TAG }}
+        tags: "${GIT_COMMIT}"
         
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
       with:
-        image: ${TAG}
+        image: "${GIT_COMMIT}"
         #image: ${{ secrets.DOCKER_USERNAME }}/takemeout:${{ github.sha }}
 
     - name: clone Gitops repo and update image name
