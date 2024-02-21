@@ -3,6 +3,14 @@ const client = require('prom-client');
 
 // Create a Registry to register the metrics
 const register = new client.Registry();
+
+const requestDurationHistogram = new client.Histogram({
+    name: 'http_request_duration_seconds',
+    help: 'Duration of HTTP requests in seconds',
+    labelNames: ['method', 'route', 'status'],
+    buckets: [0.1, 0.5, 1, 1.5], // Customize your buckets as needed
+});
+
 register.registerMetric(requestDurationHistogram);
 
 client.collectDefaultMetrics({
@@ -14,12 +22,7 @@ client.collectDefaultMetrics({
 });
 
 
-const requestDurationHistogram = new client.Histogram({
-    name: 'http_request_duration_seconds',
-    help: 'Duration of HTTP requests in seconds',
-    labelNames: ['method', 'route', 'status'],
-    buckets: [0.1, 0.5, 1, 1.5], // Customize your buckets as needed
-});
+
 
 app = express();
 const cors = require('cors');
