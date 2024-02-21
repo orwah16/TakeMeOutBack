@@ -13,6 +13,7 @@ client.collectDefaultMetrics({
     register
 });
 
+
 const requestDurationHistogram = new client.Histogram({
     name: 'http_request_duration_seconds',
     help: 'Duration of HTTP requests in seconds',
