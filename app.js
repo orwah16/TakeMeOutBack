@@ -43,7 +43,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(requestMethod)
+//app.use(requestMethod)
 app.use(express.json());
 app.use(cors());
 const PORT = process.env.PORT || 3000
