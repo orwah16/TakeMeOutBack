@@ -106,6 +106,7 @@ jobs:
         git clone -b feature https://github.com/orwah16/TakeMeOutBackGitOps.git
         cd ./TakeMeOutBackGitOps/kubernetes
         sed "s/{{GIT_COMMIT}}/${{ github.sha }}/g" ../../deployment-template.yaml > ./nodePod.yaml
+        sed "s/{{GIT_COMMIT}}/${{ github.sha }}/g" ../../deployment-template.yaml > ../takemeout-chart/templates/nodePod.yaml
       # sed "s/{{GIT_COMMIT}}/$GIT_COMMIT/g" ../../deployment-template.yaml > ./kubernetes/nodPod.yaml
 
 
