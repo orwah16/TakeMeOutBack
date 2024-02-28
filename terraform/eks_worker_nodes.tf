@@ -37,7 +37,7 @@ resource "aws_eks_node_group" "nodes" {
   node_group_name = "nodes"
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids      = aws_subnet.EKS_private_subnet[*].id
-  ami_type        = "AL2_ARM_64"
+  ami_type        = "AL2_x86_64"
   # instance_types = ["t3.micro"]
   #capacity_type  = "ON_DEMAND"
   # disk_size      = 20
@@ -75,7 +75,7 @@ resource "aws_launch_template" "eks_launch_template" {
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
   #image_id = data.aws_ami.server_ami.id
   #image_id      = "ami-03eaa1eb8976e21a9"
-  instance_type = "t4g.medium"
+  instance_type = "t3a.medium"
   key_name = "bastionkey"
   # block_device_mappings {
   #   device_name = "/dev/xvda"
