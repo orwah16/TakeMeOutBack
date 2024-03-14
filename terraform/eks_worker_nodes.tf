@@ -75,7 +75,7 @@ resource "aws_launch_template" "eks_launch_template" {
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
   #image_id = data.aws_ami.server_ami.id
   #image_id      = "ami-03eaa1eb8976e21a9"
-  instance_type = "t3a.small"
+  instance_type = "t3a.medium"
   key_name = "bastionkey"
   # block_device_mappings {
   #   device_name = "/dev/xvda"

@@ -13,11 +13,11 @@ provider "aws" {
   profile                  = "default"
 }
 
-provider "helm" {
-  kubernetes {
-    config_path = "~/.kube/config"
-  }
-}
+# provider "helm" {
+#   kubernetes {
+#     config_path = "~/.kube/config"
+#   }
+# }
 
 resource "helm_release" "argocd" {
   name = "argocd"
@@ -31,15 +31,14 @@ resource "helm_release" "argocd" {
   values = [file("values/argocd.yaml")]
 
 }
-#upgrade for later:
-# provider "helm" {
-#   kubernetes {
-#     host                   = var.cluster_endpoint
-#     cluster_ca_certificate = base64decode(var.cluster_ca_cert)
-#     exec {
-#       api_version = "client.authentication.k8s.io/v1beta1"
-#       args        = ["eks", "get-token", "--cluster-name", var.cluster_name]
-#       command     = "aws"
-#     }
-#   }
-# }
+provider "helm" {
+  kubernetes {
+    host                   = aws_eks_cluster.EKS.endpoint
+    cluster_ca_certificate = base64decode(aws_eks_cluster.EKS.certificate_authority[0].data)
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      args        = ["eks", "get-token", "--cluster-name", "terraform-eks-cluster"]
+      command     = "aws"
+    }
+  }
+}

@@ -124,32 +124,18 @@ resource "aws_security_group" "allow_tls" {
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
   }
-  ingress { #for weave
-    description = "TLS from VPC"
-    from_port   = 6783
-    to_port     = 6783
-    protocol    = "tcp"
-    cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
-  }
-  ingress {
-    description = "TLS from VPC"
-    from_port   = 6783
-    to_port     = 6783
-    protocol    = "udp"
-    cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
-  }
-  ingress {
-    description = "TLS from VPC"
-    from_port   = 6784
-    to_port     = 6784
-    protocol    = "udp"
-    cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
-  }
   #load balancer
   ingress {
     description     = "load balancer"
     from_port       = 3000
     to_port         = 3000
+    protocol        = "tcp"
+    cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
+  }
+  ingress {
+    description     = "Allow Node Exporter Access"
+    from_port       = 9100
+    to_port         = 9100
     protocol        = "tcp"
     cidr_blocks = [aws_vpc.EKS_vpc.cidr_block]
   }
