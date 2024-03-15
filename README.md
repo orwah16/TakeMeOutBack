@@ -1,8 +1,8 @@
 # TakeMeOutBack
 
 # this is the backend for TakeMeOut app 
-GitOps repository: https://github.com/orwah16/TakeMeOutBackGitOps 
-FrontEnd repository:  https://github.com/orwah16/TakeMeOut
+GitOps repository: https://github.com/orwah16/TakeMeOutBackGitOps <br/>
+FrontEnd repository:  https://github.com/orwah16/TakeMeOut <br/>
 ### it uses: 
  - Postgres for relational database
  - node.js with expres.js for CRUD operations
